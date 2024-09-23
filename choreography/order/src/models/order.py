@@ -10,9 +10,8 @@ from sqlalchemy import (
     SmallInteger,
 )
 from sqlalchemy.orm import relationship
-
-from database import Base
 from utils.enum import OrderStatusEnum
+from . import Base
 
 
 class Order(Base):

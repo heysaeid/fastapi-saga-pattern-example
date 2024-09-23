@@ -1,6 +1,6 @@
 from faststream import FastStream
 from faststream.kafka import KafkaBroker
-from config import settings
+from src.config import settings
 
 
 class TestKafkaBroker(KafkaBroker):

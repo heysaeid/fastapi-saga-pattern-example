@@ -10,3 +10,20 @@ class CreatePaymentSchema(BaseModel):
 
 class PaymentUpdateSchema(BaseModel):
     status: PaymentStatusEnum
+
+
+class CreatePaymentEventSchema(CreatePaymentSchema):
+    ...
+
+
+class CancelPaymentEventSchema(BaseModel):
+    payment_id: int
+
+
+class CancelOrderEventSchema(BaseModel):
+    order_id: int
+
+
+class CreateDeliveryEventSchema(BaseModel):
+    order_id: int
+    address: str

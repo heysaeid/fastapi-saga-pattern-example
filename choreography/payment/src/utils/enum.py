@@ -9,5 +9,7 @@ class PaymentStatusEnum(Enum):
 
 
 class KafkaTopicEnum(str, Enum):
+    CREATE_PAYMENT = "create-payment"
     CREATE_DELIVERY = "create-delivery"
     CANCEL_ORDER = "cancel-order"
+    CANCEL_PAYMENT = "cancel-payment"

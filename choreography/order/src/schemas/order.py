@@ -5,7 +5,7 @@ from utils.enum import OrderStatusEnum
 
 class CreateOrderItem(BaseModel):
     product_id: PositiveInt
-    quantity: PositiveInt = Field(max=10)
+    quantity: PositiveInt = Field(lt=11)
     unit_price: PositiveFloat
 
 
@@ -26,3 +26,11 @@ class CreateOrderSchema(BaseModel):
                 "total_amount": 1000,
             }
         }
+
+
+class CreatePaymentEventSchema(BaseModel):
+    order_id: int = Field(gt=0)
+    amount: float = Field(gt=0)
+
+class CancelOrderEventSchema(BaseModel):
+    order_id: PositiveInt

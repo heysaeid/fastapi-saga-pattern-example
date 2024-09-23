@@ -5,14 +5,12 @@ from database import create_all_tables
 
 
 async def start_application() -> None:
-    #await create_all_tables()
-    #await stream_app.start()
-    ...
+    await create_all_tables()
+    await stream_app.start()
 
 
 async def down_application() -> None:
-    #await stream_app.stop()
-    ...
+    await stream_app.stop()
 
 
 @asynccontextmanager

@@ -10,7 +10,7 @@ class AppEnvironmentEnum(str, Enum):
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file='.env')
     app_env: str = AppEnvironmentEnum.DEVELOPMENT
-    app_name: str = 'Order'
+    app_name: str = 'Payment'
     app_port: int = 8000
     debug: bool = True
     description: str = ''

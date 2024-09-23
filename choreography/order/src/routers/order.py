@@ -1,20 +1,16 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, status
-from order.src.services.order import OrderService
-from database import get_session
-from repositories.order import OrderRepository
+from services.order import OrderService
+from utils.dependencies import get_order_service
 from schemas.order import CreateOrderSchema
+
 
 router = APIRouter()
 
 @router.post("/create_order", status_code=status.HTTP_201_CREATED, response_model=CreateOrderSchema)
 async def create_order(
-    order_service: Annotated[OrderService, Depends(OrderService)],
+    order_service: Annotated[OrderService, Depends(get_order_service)],
     data: CreateOrderSchema,
-    db_session = Depends(get_session),
 ):
-    order = await order_service.create_order(
-        order_repo = OrderRepository(db_session),
-        creation_data = data,
-    )
+    order = await order_service.create_order(creation_data = data)
     return order

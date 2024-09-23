@@ -7,3 +7,8 @@ class OrderStatusEnum(Enum):
     DISPATCHED = "Dispatched"
     DELIVERED = "Delivered"
     CANCELLED = "Cancelled"
+
+
+class KafkaTopicEnum(str, Enum):
+    CREATE_PAYMENT = "create-payment"
+    CANCEL_ORDER = "cancel-order"

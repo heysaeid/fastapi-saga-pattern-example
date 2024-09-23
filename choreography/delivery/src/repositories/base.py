@@ -126,9 +126,9 @@ class BaseRepository(Generic[ModelType]):
 
         try:
             if commit:
-                self.before_commit()
+                await self.before_commit()
                 await self.session.commit()
-                self.after_commit()
+                await self.after_commit()
             else:
                 await self.session.flush()
         except Exception as e:
