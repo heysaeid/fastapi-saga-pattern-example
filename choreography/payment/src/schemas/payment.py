@@ -1,10 +1,10 @@
-from pydantic import BaseModel, Field
-from utils.enum import PaymentStatusEnum
+from pydantic import BaseModel, PositiveInt, PositiveFloat, Field
+from utils.enums import PaymentStatusEnum
 
 
 class CreatePaymentSchema(BaseModel):
-    order_id: int = Field(gt=0)
-    amount: float = Field(0, gt=0)
+    order_id: PositiveInt
+    amount: PositiveFloat
     status: PaymentStatusEnum = Field(PaymentStatusEnum.PENDING)
 
 
@@ -17,13 +17,12 @@ class CreatePaymentEventSchema(CreatePaymentSchema):
 
 
 class CancelPaymentEventSchema(BaseModel):
-    payment_id: int
+    payment_id: PositiveInt
 
 
 class CancelOrderEventSchema(BaseModel):
-    order_id: int
+    order_id: PositiveInt
 
 
-class CreateDeliveryEventSchema(BaseModel):
-    order_id: int
-    address: str
+class ConfirmedOrderEventSchema(BaseModel):
+    order_id: PositiveInt

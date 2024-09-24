@@ -1,7 +1,6 @@
-from repositories.base import BaseRepository
 from models.payment import Payment
+from repositories.base import BaseRepository
 
 
-
-class PaymentRepository(BaseRepository):
+class PaymentRepository(BaseRepository[Payment]):
     model_class = Payment

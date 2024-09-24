@@ -1,6 +1,7 @@
 from sqlalchemy import Column, DateTime, Enum, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
-from utils.enum import DeliveryStatusEnum
+from utils.enums import DeliveryStatusEnum
+
 from . import Base
 
 

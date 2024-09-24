@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class OrderStatusEnum(Enum):
+class OrderStatusEnum(StrEnum):
     PENDING = "Pending"
     CONFIRMED = "Confirmed"
     DISPATCHED = "Dispatched"
@@ -9,6 +9,8 @@ class OrderStatusEnum(Enum):
     CANCELLED = "Cancelled"
 
 
-class KafkaTopicEnum(str, Enum):
+class KafkaTopicEnum(StrEnum):
     CREATE_PAYMENT = "create-payment"
+    CONFIRMED_ORDER = "confirmed-order"
     CANCEL_ORDER = "cancel-order"
+    CREATED_DELIVERY = "create-delivery"

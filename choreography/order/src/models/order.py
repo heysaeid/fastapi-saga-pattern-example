@@ -1,7 +1,7 @@
 import datetime
-
 from sqlalchemy import (
     Column,
+    String,
     DateTime,
     Enum,
     Float,
@@ -10,7 +10,7 @@ from sqlalchemy import (
     SmallInteger,
 )
 from sqlalchemy.orm import relationship
-from utils.enum import OrderStatusEnum
+from utils.enums import OrderStatusEnum
 from . import Base
 
 
@@ -22,7 +22,8 @@ class Order(Base):
     order_date = Column(DateTime, default=datetime.datetime.now)
     status = Column(Enum(OrderStatusEnum), default=OrderStatusEnum.PENDING, nullable=False)
     total_amount = Column(Float, nullable=False)
-
+    province = Column(String(length=80), nullable=False)
+    city = Column(String(length=80), nullable=False)
     order_items = relationship("OrderItem", back_populates="order")
 
 
@@ -34,5 +35,4 @@ class OrderItem(Base):
     product_id = Column(Integer, nullable=False)
     quantity = Column(SmallInteger, nullable=False)
     unit_price = Column(Float, nullable=False)
-
     order = relationship("Order", back_populates="order_items")

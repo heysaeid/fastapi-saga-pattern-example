@@ -1,9 +1,9 @@
 from collections.abc import AsyncGenerator
 
 from config import settings
+from models import Base
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
-from models import Base
 
 engine = create_async_engine(settings.sqlalchemy_db_url)
 async_session = sessionmaker(

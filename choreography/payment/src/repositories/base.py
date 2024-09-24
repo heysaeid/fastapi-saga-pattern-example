@@ -1,11 +1,9 @@
 from typing import Generic, TypeVar
-
-from database import Base
 from pydantic.types import PositiveInt
 from sqlalchemy import Select, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-ModelType = TypeVar("ModelType", bound=Base)
+ModelType = TypeVar("ModelType")
 
 
 class BaseRepository(Generic[ModelType]):

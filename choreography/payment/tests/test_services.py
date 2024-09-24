@@ -1,6 +1,6 @@
 import pytest
 from src.schemas.payment import CreatePaymentSchema
-from src.utils.enum import PaymentStatusEnum
+from src.utils.enums import PaymentStatusEnum
 
 
 @pytest.mark.asyncio

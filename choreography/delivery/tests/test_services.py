@@ -1,11 +1,9 @@
 import pytest
-from src.models.delivery import Delivery, DeliveryPerson
+from src.models.delivery import DeliveryPerson
 from src.services.delivery import DeliveryService
-from src.repositories.delivery import DeliveryRepository
 from src.repositories.delivery_person import DeliveryPersonRepository
 from src.schemas.delivery import CreateDeliverySchema
-from src.utils.enum import DeliveryStatusEnum
-from src.repositories.delivery_person import DeliveryPersonRepository
+from src.utils.enums import DeliveryStatusEnum
 
 
 @pytest.mark.asyncio
@@ -33,7 +31,7 @@ async def test_create_delivery_success(
     assert delivery.delivery_person_id == delivery_person.id
     assert delivery.province == creation_data.province
     assert delivery.city == creation_data.city
-    assert delivery.status == DeliveryStatusEnum.IN_TRANSIT.value
+    assert delivery.status == DeliveryStatusEnum.IN_TRANSIT
 
 
 @pytest.mark.asyncio

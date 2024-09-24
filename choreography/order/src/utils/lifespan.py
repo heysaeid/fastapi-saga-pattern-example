@@ -1,7 +1,8 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
-from utils.stream import app as stream_app
+from stream import app as stream_app
 from database import create_all_tables
+import consumers
 
 
 async def start_application() -> None:

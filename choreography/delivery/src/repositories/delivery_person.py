@@ -1,9 +1,8 @@
-from repositories.base import BaseRepository
 from models.delivery import DeliveryPerson
-from sqlalchemy import select
+from repositories.base import BaseRepository
 
 
-class DeliveryPersonRepository(BaseRepository):
+class DeliveryPersonRepository(BaseRepository[DeliveryPerson]):
     model_class = DeliveryPerson
 
     async def get_by_location(self, province: str, city: str):
