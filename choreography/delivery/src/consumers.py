@@ -1,4 +1,4 @@
-from faststream import Depends
+from faststream import Depends, Logger
 from stream import broker
 from database import get_session
 from repositories.delivery import DeliveryRepository
@@ -17,6 +17,8 @@ def get_delivery_service(db = Depends(get_session)):
 @broker.subscriber(KafkaTopicEnum.CREATE_DELIVERY, group_id=f"grp-{KafkaTopicEnum.CREATE_DELIVERY}")
 async def handle_create_delivery_event(
     message: CreateDeliveryEventSchema,
+    logger: Logger,
     delivery_service: DeliveryService = Depends(get_delivery_service),
 ) -> None:
     await delivery_service.create_delivery(message)
+    logger.info(f"New delivery created: {message}")

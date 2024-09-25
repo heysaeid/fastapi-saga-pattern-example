@@ -1,4 +1,4 @@
-from faststream import Depends
+from faststream import Depends, Logger
 from services.order import OrderService
 from repositories.order import OrderRepository
 from schemas.order import CancelOrderEventSchema
@@ -17,14 +17,18 @@ async def get_order_service(order_repo = Depends(get_order_repository)):
 @broker.subscriber(KafkaTopicEnum.CONFIRMED_ORDER, group_id=f"grp-{KafkaTopicEnum.CONFIRMED_ORDER}")
 async def handle_confirmed_order_event(
     message: CancelOrderEventSchema,
+    logger: Logger,
     order_service: OrderService = Depends(get_order_service),
 ):
     await order_service.confirmed_order(message.order_id)
+    logger.info(f"Order confirmed: {message}")
 
 
 @broker.subscriber(KafkaTopicEnum.CANCEL_ORDER, group_id=f"grp-{KafkaTopicEnum.CANCEL_ORDER}")
 async def handle_cancel_order_event(
     message: CancelOrderEventSchema,
+    logger: Logger,
     order_service: OrderService = Depends(get_order_service),
 ):
     await order_service.cancel_order(message.order_id)
+    logger.info(f"The order was cancelled: {message}")

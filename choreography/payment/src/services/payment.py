@@ -35,8 +35,10 @@ class PaymentService:
         )
         return payment
 
-    async def cancel_payment(self, payment_id: PositiveInt):
-        payment = await self.get_payment_or_404(payment_id)
+    async def cancel_payment(self, order_id: PositiveInt):
+        query = self.payment_repo._select().filter_by(order_id=order_id, status=PaymentStatusEnum.PENDING)
+        payment = (await self.payment_repo.session.scalars(query)).first()
+        payment = await self.get_payment_or_404(order_id)
         payment.status = PaymentStatusEnum.REFUNDED
         await self.payment_repo.update(payment, commit=True)
         await broker.publish(
