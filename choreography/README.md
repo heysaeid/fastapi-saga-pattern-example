@@ -38,3 +38,15 @@ If the user confirms the payment:
 If the delivery cannot be assigned, DeliveryService emits a cancel-payment event:
   - PaymentService cancels the payment and emits a cancel-order event.
   - OrderService marks the order as cancelled.
+
+```mermaid
+graph TD
+    A[Create Order] --> B{Payment Created}
+    B -->|Payment Confirmed| C[Update Order Status to Confirmed]
+    C --> D{Delivery Created}
+    D -->|Delivery Assigned| E[End] 
+    D -->|Delivery Not Assigned| F[Cancel Payment] 
+    F --> G[Cancel Order]
+    B -->|Payment Cancelled| G[Cancel Order]
+    G --> E[End]
+```

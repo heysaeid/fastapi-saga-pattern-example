@@ -3,7 +3,7 @@ from fastapi.testclient import TestClient
 
 
 @pytest.mark.asyncio
-async def test_create_order_endpoint(client: TestClient):
+async def test_create_order_endpoint(client: TestClient, mock_broker_publish):
     order_items_data = [
         {"product_id": 1, "quantity": 2, "unit_price": 100.0},
         {"product_id": 2, "quantity": 1, "unit_price": 200.0},
@@ -23,5 +23,11 @@ async def test_create_order_endpoint(client: TestClient):
     assert response_data["customer_id"] == create_order_data["customer_id"]
     assert response_data["total_amount"] == create_order_data["total_amount"]
     assert len(response_data["order_items"]) == 2
-    assert response_data["order_items"][0]["product_id"] == order_items_data[0]["product_id"]
-    assert response_data["order_items"][1]["product_id"] == order_items_data[1]["product_id"]
+    assert (
+        response_data["order_items"][0]["product_id"]
+        == order_items_data[0]["product_id"]
+    )
+    assert (
+        response_data["order_items"][1]["product_id"]
+        == order_items_data[1]["product_id"]
+    )

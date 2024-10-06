@@ -1,6 +1,9 @@
 # fastapi-saga-pattern-example
 ![Saga Pattern Image](images/saga-pattern.png)
 
+**Note:** Please note that the emphasis of this project is not on the overall architecture, code quality, or best practices. The code provided serves as a simplified example to illustrate the application of the Saga Choreography pattern and may not follow all the principles of clean code or optimal architectural design.
+
+
 The Saga design pattern is used for managing distributed transactions. In this pattern, a large transaction is broken down into smaller, independent operations. Each operation can be executed separately, and for every main operation, there’s a compensating action that undoes changes if something goes wrong.
 
 To implement Saga, we have two models: choreography and orchestration.
@@ -67,3 +70,15 @@ If the user confirms the payment:
 If the delivery cannot be assigned, DeliveryService emits a cancel-payment event:
   - PaymentService cancels the payment and emits a cancel-order event.
   - OrderService marks the order as cancelled.
+
+```mermaid
+graph TD
+    A[Create Order] --> B{Payment Created}
+    B -->|Payment Confirmed| C[Update Order Status to Confirmed]
+    C --> D{Delivery Created}
+    D -->|Delivery Assigned| E[End] 
+    D -->|Delivery Not Assigned| F[Cancel Payment] 
+    F --> G[Cancel Order]
+    B -->|Payment Cancelled| G[Cancel Order]
+    G --> E[End]
+```

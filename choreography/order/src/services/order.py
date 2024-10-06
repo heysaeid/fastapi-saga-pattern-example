@@ -1,9 +1,13 @@
-from fastapi.exceptions import HTTPException
 from pydantic import PositiveInt
 from models.order import Order, OrderItem
 from repositories.order import OrderRepository
-from schemas.order import CreateOrderSchema, CreatePaymentEventSchema, CreateDeliveryEventSchema
+from schemas.order import (
+    CreateOrderSchema,
+    CreatePaymentEventSchema,
+    CreateDeliveryEventSchema,
+)
 from utils.enums import KafkaTopicEnum, OrderStatusEnum
+from utils.exceptions import NotFoundException
 from stream import broker
 
 
@@ -14,9 +18,7 @@ class OrderService:
     async def get_order_or_404(self, order_id: PositiveInt):
         payment = await self.order_repo.get_by_id(order_id)
         if not payment:
-            raise HTTPException(
-                status_code=404, detail=f"Order with id {order_id} not found."
-            )
+            raise NotFoundException
         return payment
 
     async def create_order(
@@ -29,33 +31,28 @@ class OrderService:
             entity=Order(
                 order_items=[OrderItem(**item) for item in order_items], **data
             ),
-            commit=True,
         )
         await broker.publish(
             topic=KafkaTopicEnum.CREATE_PAYMENT,
-            message=CreatePaymentEventSchema(
-                order_id=order.id,
-                amount=order.total_amount,
-            ),
+            message=CreatePaymentEventSchema.model_validate(order),
         )
         return order
 
-    async def confirmed_order(self, order_id):
-        order = await self.get_order_or_404(order_id)
-        order.status = OrderStatusEnum.CONFIRMED
-        await self.order_repo.update(order, commit=True)
+    async def confirm_order(self, order_id: PositiveInt):
+        order = await self._update_order_status(order_id, OrderStatusEnum.CONFIRMED)
         await broker.publish(
             topic=KafkaTopicEnum.CREATED_DELIVERY,
-            message=CreateDeliveryEventSchema(
-                order_id=order.id,
-                province=order.province,
-                city=order.city,
-            ),
+            message=CreateDeliveryEventSchema.model_validate(order),
         )
         return order
+    
+    async def confirm_order_delivery(self, order_id: PositiveInt):
+        return await self._update_order_status(order_id, OrderStatusEnum.DELIVERED)
 
     async def cancel_order(self, order_id: PositiveInt):
+        return await self._update_order_status(order_id, OrderStatusEnum.CANCELLED)
+
+    async def _update_order_status(self, order_id: PositiveInt, status: OrderStatusEnum):
         order = await self.get_order_or_404(order_id)
-        order.status = OrderStatusEnum.CANCELLED
-        await self.order_repo.update(order, commit=True)
+        order = await self.order_repo.update(order, status=status)
         return order
