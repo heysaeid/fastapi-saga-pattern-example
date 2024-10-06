@@ -7,13 +7,14 @@ from database import get_session
 from stream import broker
 
 
-
-def get_payment_service(db = Depends(get_session)):
+def get_payment_service(db=Depends(get_session)):
     payment_repo = PaymentRepository(db)
     return PaymentService(payment_repo)
 
 
-@broker.subscriber(KafkaTopicEnum.CREATE_PAYMENT, group_id=f"grp-{KafkaTopicEnum.CREATE_PAYMENT}")
+@broker.subscriber(
+    KafkaTopicEnum.CREATE_PAYMENT, group_id=f"{KafkaTopicEnum.CREATE_PAYMENT}-grp"
+)
 async def handle_create_payment_event(
     message: CreatePaymentEventSchema,
     logger: Logger,
@@ -23,7 +24,9 @@ async def handle_create_payment_event(
     logger.info(f"New payment created: {message}")
 
 
-@broker.subscriber(KafkaTopicEnum.CANCEL_PAYMENT, group_id=f"grp-{KafkaTopicEnum.CANCEL_PAYMENT}")
+@broker.subscriber(
+    KafkaTopicEnum.CANCEL_PAYMENT, group_id=f"{KafkaTopicEnum.CANCEL_PAYMENT}-grp"
+)
 async def handle_cancel_payment_event(
     message: CancelPaymentEventSchema,
     logger: Logger,

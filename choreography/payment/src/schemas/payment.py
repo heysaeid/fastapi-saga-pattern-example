@@ -24,5 +24,5 @@ class CancelOrderEventSchema(BaseModel):
     order_id: PositiveInt
 
 
-class ConfirmedOrderEventSchema(BaseModel):
+class ConfirmOrderEventSchema(BaseModel):
     order_id: PositiveInt

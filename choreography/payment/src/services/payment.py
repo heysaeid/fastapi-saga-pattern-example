@@ -1,11 +1,14 @@
 from pydantic import PositiveInt
-from fastapi.exceptions import HTTPException
 from models.payment import Payment
 from repositories.payment import PaymentRepository
-from schemas.payment import CreatePaymentSchema, ConfirmedOrderEventSchema, CancelOrderEventSchema
+from schemas.payment import (
+    CreatePaymentSchema,
+    ConfirmOrderEventSchema,
+    CancelOrderEventSchema,
+)
 from utils.enums import PaymentStatusEnum, KafkaTopicEnum
+from utils.exceptions import NotFoundException
 from stream import broker
-
 
 
 class PaymentService:
@@ -15,34 +18,34 @@ class PaymentService:
     async def get_payment_or_404(self, payment_id: PositiveInt):
         payment = await self.payment_repo.get_by_id(payment_id)
         if not payment:
-            raise HTTPException(status_code=404, detail=f"Payment with id {payment_id} not found.")
+            raise NotFoundException
         return payment
 
     async def create_payment(self, creation_data: CreatePaymentSchema):
         payment = await self.payment_repo.create(
-            entity=Payment(**creation_data.model_dump()),
-            commit=True,
+            entity=Payment(**creation_data.model_dump())
         )
         return payment
 
     async def confirm_payment(self, payment_id: PositiveInt):
-        payment = await self.get_payment_or_404(payment_id)
-        payment.status = PaymentStatusEnum.COMPLETED
-        await self.payment_repo.update(payment, commit=True)
+        payment = await self._update_payment_status(payment_id, PaymentStatusEnum.COMPLETED)
         await broker.publish(
-            topic=KafkaTopicEnum.CONFIRMED_ORDER,
-            message=ConfirmedOrderEventSchema(order_id=payment.order_id),
+            topic=KafkaTopicEnum.CONFIRM_ORDER,
+            message=ConfirmOrderEventSchema(order_id=payment.order_id),
         )
         return payment
 
-    async def cancel_payment(self, order_id: PositiveInt):
-        query = self.payment_repo._select().filter_by(order_id=order_id, status=PaymentStatusEnum.PENDING)
-        payment = (await self.payment_repo.session.scalars(query)).first()
-        payment = await self.get_payment_or_404(order_id)
-        payment.status = PaymentStatusEnum.REFUNDED
-        await self.payment_repo.update(payment, commit=True)
+    async def cancel_payment(self, payment_id: PositiveInt):
+        payment = await self._update_payment_status(payment_id, PaymentStatusEnum.REFUNDED)
         await broker.publish(
             topic=KafkaTopicEnum.CANCEL_ORDER,
             message=CancelOrderEventSchema(order_id=payment.order_id),
         )
+        return payment
+
+    async def _update_payment_status(
+        self, payment_id: PositiveInt, status: PaymentStatusEnum
+    ):
+        payment = await self.get_payment_or_404(payment_id)
+        payment = await self.payment_repo.update(payment, status=status)
         return payment

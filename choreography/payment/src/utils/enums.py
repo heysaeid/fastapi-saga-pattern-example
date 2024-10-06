@@ -10,6 +10,6 @@ class PaymentStatusEnum(StrEnum):
 
 class KafkaTopicEnum(StrEnum):
     CREATE_PAYMENT = "create-payment"
+    CONFIRM_ORDER = "confirm-order"
     CANCEL_ORDER = "cancel-order"
-    CONFIRMED_ORDER = "confirmed-order"
     CANCEL_PAYMENT = "cancel-payment"

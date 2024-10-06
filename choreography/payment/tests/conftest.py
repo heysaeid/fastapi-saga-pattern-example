@@ -1,4 +1,6 @@
+import pytest
 import pytest_asyncio
+from unittest.mock import AsyncMock
 from fastapi.testclient import TestClient
 from src.app import create_app
 from src.database import drop_and_create_all_tables, get_session
@@ -37,3 +39,9 @@ async def create_payment(payment_service):
         return payment
 
     return _create_payment
+
+
+@pytest.fixture
+def mock_broker_publish(mocker):
+    mock_publish = mocker.patch("services.payment.broker.publish", new=AsyncMock())
+    yield mock_publish
