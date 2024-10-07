@@ -25,7 +25,7 @@ async def test_confirm_order(
     order_service: OrderService, order_data, mock_broker_publish
 ):
     created_order = await order_service.create_order(order_data)
-    confirmed_order = await order_service.confirm_order(created_order.id)
+    confirmed_order = await order_service.confirm_order(order_id=created_order.id, payment_id=1)
     assert confirmed_order.status == OrderStatusEnum.CONFIRMED
     mock_broker_publish.assert_called()
 

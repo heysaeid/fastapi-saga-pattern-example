@@ -10,7 +10,8 @@ class Delivery(Base):
 
     id = Column(Integer, primary_key=True)
     order_id = Column(Integer, nullable=False, index=True)
-    delivery_person_id = Column(Integer, ForeignKey("delivery_persons.id"), nullable=False)
+    payment_id = Column(Integer, nullable=False, index=True)
+    delivery_person_id = Column(Integer, ForeignKey("delivery_persons.id"))
     delivery_person = relationship("DeliveryPerson", back_populates="deliveries")
     status = Column(Enum(DeliveryStatusEnum), default=DeliveryStatusEnum.IN_TRANSIT)
     delivery_data = Column(DateTime, nullable=True)

@@ -20,6 +20,7 @@ async def handle_create_payment_event(
     logger: Logger,
     payment_service: PaymentService = Depends(get_payment_service),
 ) -> None:
+    
     await payment_service.create_payment(message)
     logger.info(f"New payment created: {message}")
 
@@ -32,5 +33,5 @@ async def handle_cancel_payment_event(
     logger: Logger,
     payment_service: PaymentService = Depends(get_payment_service),
 ) -> None:
-    await payment_service.cancel_payment(message.order_id)
+    await payment_service.cancel_payment(message.payment_id)
     logger.info(f"The payment was cancelled: {message}")

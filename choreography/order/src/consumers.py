@@ -27,7 +27,7 @@ async def handle_confirm_order_event(
     logger: Logger,
     order_service: OrderService = Depends(get_order_service),
 ):
-    await order_service.confirm_order(message.order_id)
+    await order_service.confirm_order(message.order_id, message.payment_id)
     logger.info(f"Order confirmed: {message}")
 
 

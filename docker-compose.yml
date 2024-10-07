@@ -82,7 +82,7 @@ services:
       SQLALCHEMY_DB_URL: "sqlite+aiosqlite:///delivery.db"
       BROKER_URL: "kafka:9092"
     volumes:
-      - ./choreography/payment/:/app
+      - ./choreography/delivery/:/app
     ports:
       - "8002:8002"
     depends_on:
