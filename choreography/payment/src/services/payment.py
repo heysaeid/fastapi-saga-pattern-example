@@ -31,7 +31,10 @@ class PaymentService:
         payment = await self._update_payment_status(payment_id, PaymentStatusEnum.COMPLETED)
         await broker.publish(
             topic=KafkaTopicEnum.CONFIRM_ORDER,
-            message=ConfirmOrderEventSchema(order_id=payment.order_id),
+            message=ConfirmOrderEventSchema(
+                order_id=payment.order_id, 
+                payment_id=payment_id,
+            )
         )
         return payment
 

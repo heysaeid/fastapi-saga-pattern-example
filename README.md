@@ -1,6 +1,7 @@
 # fastapi-saga-pattern-example
-![Saga Pattern Image](images/saga-pattern.png)
+![Saga Pattern Image](https://github.com/heysaeid/fastapi-saga-pattern-example/blob/master/docs/saga-pattern.png)
 
+**Note:** The orchestrator method will also be added soon...
 **Note:** Please note that the emphasis of this project is not on the overall architecture, code quality, or best practices. The code provided serves as a simplified example to illustrate the application of the Saga Choreography pattern and may not follow all the principles of clean code or optimal architectural design.
 
 

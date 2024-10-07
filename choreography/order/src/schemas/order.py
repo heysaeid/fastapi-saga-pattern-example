@@ -33,8 +33,8 @@ class CreateOrderSchema(BaseModel):
 
 
 class CreatePaymentEventSchema(BaseModel):
-    order_id: PositiveInt = Field(gt=0, alias="id")
-    amount: PositiveFloat = Field(gt=0, alias="total_amount")
+    order_id: PositiveInt = Field(gt=0, validation_alias="id")
+    amount: PositiveFloat = Field(gt=0, validation_alias="total_amount")
     
     model_config = {
         "from_attributes": True,
@@ -42,7 +42,8 @@ class CreatePaymentEventSchema(BaseModel):
 
 
 class CreateDeliveryEventSchema(BaseModel):
-    order_id: PositiveInt = Field(alias="id")
+    order_id: PositiveInt
+    payment_id: PositiveInt
     province: str
     city: str
     
@@ -53,6 +54,7 @@ class CreateDeliveryEventSchema(BaseModel):
 
 class ConfirmOrderEventSchema(BaseModel):
     order_id: PositiveInt
+    payment_id: PositiveInt
 
 
 class ConfirmOrderDeliveryEventSchema(BaseModel):

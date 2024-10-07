@@ -17,7 +17,7 @@ class CreatePaymentEventSchema(CreatePaymentSchema):
 
 
 class CancelPaymentEventSchema(BaseModel):
-    order_id: PositiveInt
+    payment_id: PositiveInt
 
 
 class CancelOrderEventSchema(BaseModel):
@@ -26,3 +26,4 @@ class CancelOrderEventSchema(BaseModel):
 
 class ConfirmOrderEventSchema(BaseModel):
     order_id: PositiveInt
+    payment_id: PositiveInt

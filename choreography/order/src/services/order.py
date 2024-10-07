@@ -38,11 +38,16 @@ class OrderService:
         )
         return order
 
-    async def confirm_order(self, order_id: PositiveInt):
+    async def confirm_order(self, order_id: PositiveInt, payment_id: PositiveInt):
         order = await self._update_order_status(order_id, OrderStatusEnum.CONFIRMED)
         await broker.publish(
             topic=KafkaTopicEnum.CREATED_DELIVERY,
-            message=CreateDeliveryEventSchema.model_validate(order),
+            message=CreateDeliveryEventSchema(
+                order_id=order_id,
+                payment_id=payment_id,
+                province=order.province,
+                city=order.city,
+            )
         )
         return order
     
