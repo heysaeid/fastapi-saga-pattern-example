@@ -11,4 +11,5 @@ if __name__ == "__main__":
         reload=True, 
         env_file=".env", 
         port=settings.app_port,
+        host="0.0.0.0",
     )
