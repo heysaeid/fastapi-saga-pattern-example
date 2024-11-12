@@ -10,7 +10,6 @@ class Settings(BaseSettings):
     debug: bool = True
     description: str = ''
     sqlalchemy_db_url: str = 'sqlite+aiosqlite:///payment.db'
-    broker_url: str = 'localhost:29092'
 
 
 @lru_cache

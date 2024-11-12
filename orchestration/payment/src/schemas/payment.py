@@ -11,19 +11,3 @@ class CreatePaymentSchema(BaseModel):
 class PaymentUpdateSchema(BaseModel):
     status: PaymentStatusEnum
 
-
-class CreatePaymentEventSchema(CreatePaymentSchema):
-    ...
-
-
-class CancelPaymentEventSchema(BaseModel):
-    payment_id: PositiveInt
-
-
-class CancelOrderEventSchema(BaseModel):
-    order_id: PositiveInt
-
-
-class ConfirmOrderEventSchema(BaseModel):
-    order_id: PositiveInt
-    payment_id: PositiveInt

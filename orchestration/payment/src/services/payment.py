@@ -1,14 +1,9 @@
 from pydantic import PositiveInt
 from models.payment import Payment
 from repositories.payment import PaymentRepository
-from schemas.payment import (
-    CreatePaymentSchema,
-    ConfirmOrderEventSchema,
-    CancelOrderEventSchema,
-)
-from utils.enums import PaymentStatusEnum, KafkaTopicEnum
+from schemas.payment import CreatePaymentSchema
+from utils.enums import PaymentStatusEnum
 from utils.exceptions import NotFoundException
-from stream import broker
 
 
 class PaymentService:
@@ -29,21 +24,10 @@ class PaymentService:
 
     async def confirm_payment(self, payment_id: PositiveInt):
         payment = await self._update_payment_status(payment_id, PaymentStatusEnum.COMPLETED)
-        await broker.publish(
-            topic=KafkaTopicEnum.CONFIRM_ORDER,
-            message=ConfirmOrderEventSchema(
-                order_id=payment.order_id, 
-                payment_id=payment_id,
-            )
-        )
         return payment
 
     async def cancel_payment(self, payment_id: PositiveInt):
         payment = await self._update_payment_status(payment_id, PaymentStatusEnum.REFUNDED)
-        await broker.publish(
-            topic=KafkaTopicEnum.CANCEL_ORDER,
-            message=CancelOrderEventSchema(order_id=payment.order_id),
-        )
         return payment
 
     async def _update_payment_status(
