@@ -32,7 +32,7 @@ class CreateOrderSchema(BaseModel):
     }
 
 
-class CreatePaymentEventSchema(BaseModel):
+class CreatePaymentRequestSchema(BaseModel):
     order_id: PositiveInt = Field(gt=0, validation_alias="id")
     amount: PositiveFloat = Field(gt=0, validation_alias="total_amount")
     
@@ -41,7 +41,11 @@ class CreatePaymentEventSchema(BaseModel):
     }
 
 
-class CreateDeliveryEventSchema(BaseModel):
+class CreatePaymentResponseSchema(BaseModel):
+    payment_id: PositiveInt
+
+
+class CreateDeliveryRequestSchema(BaseModel):
     order_id: PositiveInt
     payment_id: PositiveInt
     province: str
@@ -52,14 +56,7 @@ class CreateDeliveryEventSchema(BaseModel):
     }
 
 
-class ConfirmOrderEventSchema(BaseModel):
+class ConfirmOrderRequestSchema(BaseModel):
     order_id: PositiveInt
     payment_id: PositiveInt
 
-
-class ConfirmOrderDeliveryEventSchema(BaseModel):
-    order_id: PositiveInt
-
-
-class CancelOrderEventSchema(BaseModel):
-    order_id: PositiveInt

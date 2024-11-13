@@ -1,8 +1,8 @@
 from typing import Annotated
 from fastapi import APIRouter, status, Depends
-from services.order import OrderService
-from utils.dependencies import get_order_service
+from utils.dependencies import get_order_process_service
 from schemas.order import CreateOrderSchema
+from services.order_process import OrderProcessService
 
 router = APIRouter()
 
@@ -13,8 +13,8 @@ router = APIRouter()
     response_model=CreateOrderSchema,
 )
 async def create_order(
-    order_service: Annotated[OrderService, Depends(get_order_service)],
+    order_process_service: Annotated[OrderProcessService, Depends(get_order_process_service)],
     data: CreateOrderSchema,
 ):
-    order = await order_service.create_order(creation_data=data)
+    order = await order_process_service.start_order_process(creation_data=data)
     return order

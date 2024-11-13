@@ -1,14 +1,9 @@
 from pydantic import PositiveInt
 from models.order import Order, OrderItem
 from repositories.order import OrderRepository
-from schemas.order import (
-    CreateOrderSchema,
-    CreatePaymentEventSchema,
-    CreateDeliveryEventSchema,
-)
-from utils.enums import KafkaTopicEnum, OrderStatusEnum
+from schemas.order import CreateOrderSchema
+from utils.enums import OrderStatusEnum
 from utils.exceptions import NotFoundException
-from stream import broker
 
 
 class OrderService:
@@ -32,23 +27,10 @@ class OrderService:
                 order_items=[OrderItem(**item) for item in order_items], **data
             ),
         )
-        await broker.publish(
-            topic=KafkaTopicEnum.CREATE_PAYMENT,
-            message=CreatePaymentEventSchema.model_validate(order),
-        )
         return order
 
     async def confirm_order(self, order_id: PositiveInt, payment_id: PositiveInt):
         order = await self._update_order_status(order_id, OrderStatusEnum.CONFIRMED)
-        await broker.publish(
-            topic=KafkaTopicEnum.CREATED_DELIVERY,
-            message=CreateDeliveryEventSchema(
-                order_id=order_id,
-                payment_id=payment_id,
-                province=order.province,
-                city=order.city,
-            )
-        )
         return order
     
     async def confirm_order_delivery(self, order_id: PositiveInt):

@@ -11,6 +11,14 @@ class Settings(BaseSettings):
     description: str = ''
     sqlalchemy_db_url: str = 'sqlite+aiosqlite:///order.db'
     broker_url: str = 'localhost:29092'
+    
+    payment_service_url: str = "localhost:8001"
+    delivery_service_url: str = "localhost:8002"
+    
+    create_payment_endpoint: str = payment_service_url + "/payments/create_payment"
+    confirm_payment_endpoint: str = payment_service_url + "/payments/{product_id}/confirm"
+    cancel_payment_endpoint: str = payment_service_url + "/payments/{product_id}/cancel"
+    create_delivery_endpoint: str = delivery_service_url + "/deliveries/create_delivery"
 
 
 @lru_cache
