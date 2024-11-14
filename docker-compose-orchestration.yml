@@ -1,0 +1,103 @@
+version: '3.8'
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:6.2.1
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - 22181:2181
+    volumes:
+      - zookeeper_data:/var/lib/zookeeper
+    networks:
+      - kafka_network
+
+  kafka:
+    image: confluentinc/cp-kafka:6.2.1
+    depends_on:
+      - zookeeper
+    ports:
+      - 29092:29092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CLUSTER_ID: ezzAhWB7QeyhfVJ9rEE3Yd
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    networks:
+      - kafka_network
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "9092"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    
+  order_service:
+    build:
+      context: ./orchestration/order/
+      dockerfile: Dockerfile
+    container_name: order_service
+    environment:
+      SQLALCHEMY_DB_URL: "sqlite+aiosqlite:///order.db"
+      BROKER_URL: "kafka:9092"
+    volumes:
+      - ./orchestration/order/:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      kafka:
+        condition: service_healthy
+    networks:
+      - kafka_network
+    restart: on-failure
+
+  payment_service:
+    build:
+      context: ./orchestration/payment/
+      dockerfile: Dockerfile
+    container_name: payment_service
+    environment:
+      SQLALCHEMY_DB_URL: "sqlite+aiosqlite:///payment.db"
+      BROKER_URL: "kafka:9092"
+    volumes:
+      - ./orchestration/payment/:/app
+    ports:
+      - "8001:8001"
+    depends_on:
+      kafka:
+        condition: service_healthy
+    networks:
+      - kafka_network
+    restart: on-failure
+
+  delivery_service:
+    build:
+      context: ./orchestration/delivery/
+      dockerfile: Dockerfile
+    container_name: delivery_service
+    environment:
+      SQLALCHEMY_DB_URL: "sqlite+aiosqlite:///delivery.db"
+      BROKER_URL: "kafka:9092"
+    volumes:
+      - ./orchestration/delivery/:/app
+    ports:
+      - "8002:8002"
+    depends_on:
+      kafka:
+        condition: service_healthy
+    networks:
+      - kafka_network
+    restart: on-failure
+
+volumes:
+  zookeeper_data:
+    external: false
+  kafka_data:
+    external: false
+
+networks:
+  kafka_network:
+    driver: bridge
